@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+
+<head>
+    <link href="/static/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <title>Tirage pour {{draw_name}}</title>
+    <h1>Tirage pour {{draw_name}}</h1>
+    <h2>Qui etes-vous ?</h2>
+    <div class="card col-sm-2">
+        <div class="table-responsive">
+            <table class="table align-items-center mb-0">
+                {% for participant in participants %}
+                <tr>
+                    <td>{{ participant.name }}</td>
+                    <td>
+                        {% if participant.drawn %}
+                        A vote
+                        {% else %}
+                        <form action="" method="post">
+                            <button class="btn btn-primary" name="itsme" value="{{participant.name}}">
+                                C'est moi!
+                            </button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>
