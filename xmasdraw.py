@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 
 @app.route("/")
-def home(path):
+def home():
     return "You need to go to a draw URL."
 
 
@@ -50,12 +50,13 @@ def participate(draw_name, participant_name):
 
 @app.route("/<draw_name>/draw", methods=["DELETE"])
 def reset(draw_name):
-    user = request.headers.get('user', None)
+    user = request.headers.get("user", None)
     if not user or not helpers.can_reset(draw_name, user):
         return "You cannot reset this draw."
 
     helpers.reset_draw(draw_name)
     return "Reset done."
+
 
 if __name__ == "__main__":
     app.run()
