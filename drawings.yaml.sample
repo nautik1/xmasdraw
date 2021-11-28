@@ -1,5 +1,6 @@
 myfamily:
-  - bob
-  - john
-  - nick
-  - sandra
+  - name: Bob
+    can_reset: true
+  - name: John
+  - name: Nick
+  - name: Sandra

@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Tirage pour {{draw_name}}</title>
+    <link rel="icon" href="/static/tree-fill.svg" color="#0b5ed7">
+    <link rel="stylesheet" href="/static/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/bootstrap-icons.css">
+</head>
+
+<body>
+    <div class="container mt-2">
+        <div class="row justify-content-md-center">
+            <div class="col-md-4">
+                <div class="card">
+                    <h5 class="card-header"><i class="bi bi-tree-fill"></i> Tirage pour {{draw_name}}</h5>
+                    <div class="card-body">
+                        <p>{{participant.name}}, tu fais un cadeau a:</p>
+                        <div class="d-flex justify-content-center offset-sm-4 col-sm-4">
+                            <h3>{{offers_to.name}}</h3>
+                        </div>
+                        <a class="btn btn-primary" href="/{{draw_name}}/draw" role="button">Retour <i class="bi bi-snow"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
