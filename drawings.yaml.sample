@@ -1,6 +1,6 @@
 myfamily:
   - name: Bob
-    can_reset: true
+    reset_password: mYpAssW0rDRoXx
   - name: John
   - name: Nick
   - name: Sandra

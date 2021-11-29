@@ -29,31 +29,32 @@ def participate(draw_name, participant_name):
     participant = [
         remaining_participants.pop(idx)
         for idx, value in enumerate(remaining_participants)
-        if value['name'] == participant_name
+        if value["name"] == participant_name
     ]
 
     if len(participant) != 1:
         return "Participant non trouve"
 
     participant = participant[0]
-    offers_to_name = participant.get('offers_to', None)
+    offers_to_name = participant.get("offers_to", None)
     if not offers_to_name:
         offers_to_name = helpers.draw(remaining_participants)
 
-    helpers.store_participation(draw_name, participant['name'], offers_to_name)
+    helpers.store_participation(draw_name, participant["name"], offers_to_name)
 
     return render_template(
         "drawn.html",
         draw_name=draw_name,
-        participant=participant['name'],
+        participant=participant["name"],
         offers_to=offers_to_name,
     )
 
 
 @app.route("/<draw_name>/draw", methods=["DELETE"])
 def reset(draw_name):
-    user = request.headers.get("user", None)
-    if not user or not helpers.can_reset(draw_name, user):
+    username = request.headers.get("User", None)
+    password = request.headers.get("Password", None)
+    if not password or not helpers.can_reset(draw_name, username, password):
         return "You cannot reset this draw."
 
     helpers.reset_draw(draw_name)

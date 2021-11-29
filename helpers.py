@@ -17,9 +17,9 @@ def draw(participants):
     # Special case: if only 2 people can be picked but one of them have not
     # played yet, we need to pick him otherwise he won't have anyone to pick
     if len(not_drawn) == 2 and len(not_already_played) == 1:
-        return not_already_played[0]['name']
+        return not_already_played[0]["name"]
 
-    return random.choice(not_drawn)['name']
+    return random.choice(not_drawn)["name"]
 
 
 def store_participation(draw_name, participant_name, offers_to_name):
@@ -48,14 +48,16 @@ def reset_draw(draw_name):
         yaml.dump(drawings, f)
 
 
-def can_reset(draw_name, user_name):
+def can_reset(draw_name, username, password):
     with open(DRAWINGS_FILEPATH) as f:
         drawings = yaml.safe_load(f)
 
     can_reset = [
         p
         for p in drawings[draw_name]
-        if p.get("can_reset", None) and p["name"] == user_name
+        if p.get("reset_password", None)
+        and p["name"] == username
+        and p["reset_password"] == password
     ]
 
     return len(can_reset) > 0
