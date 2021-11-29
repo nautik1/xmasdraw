@@ -9,5 +9,5 @@ to whom you should offer a present.
 ```
 poetry install
 cp drawings.yaml.sample drawings.yaml
-flask run
+poetry run flask run
 ```
