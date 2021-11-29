@@ -10,4 +10,5 @@ to whom you should offer a present.
 poetry install
 cp drawings.yaml.sample drawings.yaml
 poetry run flask run
+firefox http://localhost:5000/myfamily/draw
 ```
