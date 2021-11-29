@@ -17,19 +17,19 @@ def draw(participants):
     # Special case: if only 2 people can be picked but one of them have not
     # played yet, we need to pick him otherwise he won't have anyone to pick
     if len(not_drawn) == 2 and len(not_already_played) == 1:
-        return not_already_played[0]
+        return not_already_played[0]['name']
 
-    return random.choice(not_drawn)
+    return random.choice(not_drawn)['name']
 
 
-def store_participation(draw_name, participant, offers_to):
+def store_participation(draw_name, participant_name, offers_to_name):
     with open(DRAWINGS_FILEPATH) as f:
         drawings = yaml.safe_load(f)
 
     for person in drawings[draw_name]:
-        if person.get("name") == participant.get("name"):
-            person["offers_to"] = offers_to.get("name")
-        elif person.get("name") == offers_to.get("name"):
+        if person.get("name") == participant_name:
+            person["offers_to"] = offers_to_name
+        elif person.get("name") == offers_to_name:
             person["drawn"] = True
 
     with open(DRAWINGS_FILEPATH, "w") as f:

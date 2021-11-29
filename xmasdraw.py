@@ -29,22 +29,24 @@ def participate(draw_name, participant_name):
     participant = [
         remaining_participants.pop(idx)
         for idx, value in enumerate(remaining_participants)
-        if value.get("name") == participant_name
+        if value['name'] == participant_name
     ]
 
     if len(participant) != 1:
         return "Participant non trouve"
 
-    offers_to = helpers.draw(remaining_participants)
-
     participant = participant[0]
-    helpers.store_participation(draw_name, participant, offers_to)
+    offers_to_name = participant.get('offers_to', None)
+    if not offers_to_name:
+        offers_to_name = helpers.draw(remaining_participants)
+
+    helpers.store_participation(draw_name, participant['name'], offers_to_name)
 
     return render_template(
         "drawn.html",
         draw_name=draw_name,
-        participant=participant,
-        offers_to=offers_to,
+        participant=participant['name'],
+        offers_to=offers_to_name,
     )
 
 
