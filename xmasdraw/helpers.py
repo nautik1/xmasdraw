@@ -1,11 +1,13 @@
-import yaml
+import os
 import random
+import yaml
 
-DRAWINGS_FILEPATH = "drawings.yaml"
+drawings_filepath = os.getenv("DRAWINGS_FILEPATH", "./drawings.yaml")
 
 
 def get_drawing_participants(draw_name):
-    with open(DRAWINGS_FILEPATH) as f:
+
+    with open(drawings_filepath) as f:
         drawings = yaml.safe_load(f)
     return drawings.get(draw_name)
 
@@ -23,7 +25,7 @@ def draw(participants):
 
 
 def store_participation(draw_name, participant_name, offers_to_name):
-    with open(DRAWINGS_FILEPATH) as f:
+    with open(drawings_filepath) as f:
         drawings = yaml.safe_load(f)
 
     for person in drawings[draw_name]:
@@ -32,24 +34,24 @@ def store_participation(draw_name, participant_name, offers_to_name):
         elif person.get("name") == offers_to_name:
             person["drawn"] = True
 
-    with open(DRAWINGS_FILEPATH, "w") as f:
+    with open(drawings_filepath, "w") as f:
         yaml.dump(drawings, f)
 
 
 def reset_draw(draw_name):
-    with open(DRAWINGS_FILEPATH) as f:
+    with open(drawings_filepath) as f:
         drawings = yaml.safe_load(f)
 
     for person in drawings[draw_name]:
         person.pop("offers_to", None)
         person.pop("drawn", None)
 
-    with open(DRAWINGS_FILEPATH, "w") as f:
+    with open(drawings_filepath, "w") as f:
         yaml.dump(drawings, f)
 
 
 def can_reset(draw_name, username, password):
-    with open(DRAWINGS_FILEPATH) as f:
+    with open(drawings_filepath) as f:
         drawings = yaml.safe_load(f)
 
     can_reset = [
