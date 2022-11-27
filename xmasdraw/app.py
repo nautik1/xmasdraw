@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
-import helpers
+
+from . import helpers
 
 app = Flask(__name__)
 
