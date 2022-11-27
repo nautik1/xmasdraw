@@ -16,7 +16,7 @@ firefox http://localhost:5000/myfamily/draw
 ## How to build & run
 
 ```
-docker build -t xmasdraw .
+docker build -t nautik/xmasdraw .
 
 mkdir data/
 cp drawings.yaml.sample data/drawings.yaml
