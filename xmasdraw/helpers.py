@@ -6,10 +6,9 @@ drawings_filepath = os.getenv("DRAWINGS_FILEPATH", "./drawings.yaml")
 
 
 def get_drawing_participants(draw_name):
-
     with open(drawings_filepath) as f:
-        drawings = yaml.safe_load(f)
-    return drawings.get(draw_name)
+        configs = yaml.safe_load(f)
+    return configs.get('draws', {}).get(draw_name)
 
 
 def draw(participants):
@@ -26,40 +25,34 @@ def draw(participants):
 
 def store_participation(draw_name, participant_name, offers_to_name):
     with open(drawings_filepath) as f:
-        drawings = yaml.safe_load(f)
+        configs = yaml.safe_load(f)
 
-    for person in drawings[draw_name]:
+    for person in configs['draws'][draw_name]:
         if person.get("name") == participant_name:
             person["offers_to"] = offers_to_name
         elif person.get("name") == offers_to_name:
             person["drawn"] = True
 
     with open(drawings_filepath, "w") as f:
-        yaml.dump(drawings, f)
+        yaml.dump(configs, f)
 
 
 def reset_draw(draw_name):
     with open(drawings_filepath) as f:
-        drawings = yaml.safe_load(f)
+        configs = yaml.safe_load(f)
 
-    for person in drawings[draw_name]:
+    for person in configs['draws'][draw_name]:
         person.pop("offers_to", None)
         person.pop("drawn", None)
 
     with open(drawings_filepath, "w") as f:
-        yaml.dump(drawings, f)
+        yaml.dump(configs, f)
 
 
-def can_reset(draw_name, username, password):
+def can_reset(password):
     with open(drawings_filepath) as f:
-        drawings = yaml.safe_load(f)
+        configs = yaml.safe_load(f)
 
-    can_reset = [
-        p
-        for p in drawings[draw_name]
-        if p.get("reset_password", None)
-        and p["name"] == username
-        and p["reset_password"] == password
-    ]
+    adminPass = configs.get('admin_password')
 
-    return len(can_reset) > 0
+    return adminPass == password

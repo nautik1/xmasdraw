@@ -53,9 +53,8 @@ def participate(draw_name, participant_name):
 
 @app.route("/draws/<draw_name>", methods=["DELETE"])
 def reset(draw_name):
-    username = request.headers.get("User", None)
-    password = request.headers.get("Password", None)
-    if not password or not helpers.can_reset(draw_name, username, password):
+    password = request.headers.get("X-Auth-Password", None)
+    if not password or not helpers.can_reset(password):
         return "You cannot reset this draw."
 
     helpers.reset_draw(draw_name)

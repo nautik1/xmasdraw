@@ -1,6 +1,7 @@
-myfamily:
-  - name: Bob
-    reset_password: mYpAssW0rDRoXx
-  - name: John
-  - name: Nick
-  - name: Sandra
+admin_password: mYpAssW0rDRoXx
+draws:
+  myfamily:
+    - name: Bob
+    - name: John
+    - name: Nick
+    - name: Sandra
