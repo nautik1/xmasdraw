@@ -7,6 +7,8 @@ to whom you should offer a present.
 ## How to dev
 
 ```
+pyenv version           # Displays version from .python-version
+poetry env use python   # Select pyenv's local python
 poetry install
 cp drawings.yaml.sample drawings.yaml
 poetry run flask --app "xmasdraw.app:app" run
