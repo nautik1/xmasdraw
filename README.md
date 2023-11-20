@@ -12,7 +12,7 @@ poetry env use python   # Select pyenv's local python
 poetry install
 cp drawings.yaml.sample drawings.yaml
 poetry run flask --app "xmasdraw.app:app" run
-firefox http://localhost:5000/myfamily/draw
+firefox http://localhost:5000/draws/myfamily
 ```
 
 ## How to build & run

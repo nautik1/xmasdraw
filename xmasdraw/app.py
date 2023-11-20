@@ -10,7 +10,7 @@ def home():
     return "You need to go to a draw URL."
 
 
-@app.route("/<draw_name>/draw")
+@app.route("/draws/<draw_name>")
 def show_draw(draw_name):
     participants = helpers.get_drawing_participants(draw_name)
 
@@ -20,7 +20,7 @@ def show_draw(draw_name):
     return render_template("draw.html", draw_name=draw_name, participants=participants)
 
 
-@app.route("/<draw_name>/draw/<participant_name>", methods=["POST"])
+@app.route("/draws/<draw_name>/participants/<participant_name>", methods=["POST"])
 def participate(draw_name, participant_name):
     remaining_participants = helpers.get_drawing_participants(draw_name)
 
@@ -51,7 +51,7 @@ def participate(draw_name, participant_name):
     )
 
 
-@app.route("/<draw_name>/draw", methods=["DELETE"])
+@app.route("/draws/<draw_name>", methods=["DELETE"])
 def reset(draw_name):
     username = request.headers.get("User", None)
     password = request.headers.get("Password", None)
