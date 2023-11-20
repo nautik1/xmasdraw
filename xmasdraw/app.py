@@ -22,31 +22,28 @@ def show_draw(draw_name):
 
 @app.route("/draws/<draw_name>/participants/<participant_name>", methods=["POST"])
 def participate(draw_name, participant_name):
-    remaining_participants = helpers.get_drawing_participants(draw_name)
+    participants = helpers.get_drawing_participants(draw_name)
 
-    if not remaining_participants:
+    if not participants:
         return "Tirage non trouve"
 
     participant = [
-        remaining_participants.pop(idx)
-        for idx, value in enumerate(remaining_participants)
-        if value["name"] == participant_name
+        p
+        for p in participants
+        if p["name"] == participant_name and p.get("offers_to") is None
     ]
 
     if len(participant) != 1:
         return "Participant non trouve"
 
-    participant = participant[0]
-    offers_to_name = participant.get("offers_to", None)
-    if not offers_to_name:
-        offers_to_name = helpers.draw(remaining_participants)
+    offers_to_name = helpers.draw(participants, participant_name)
 
-    helpers.store_participation(draw_name, participant["name"], offers_to_name)
+    helpers.store_participation(draw_name, participant_name, offers_to_name)
 
     return render_template(
         "drawn.html",
         draw_name=draw_name,
-        participant=participant["name"],
+        participant=participant_name,
         offers_to=offers_to_name,
     )
 
