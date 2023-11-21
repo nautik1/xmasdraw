@@ -5,10 +5,29 @@ import yaml
 drawings_filepath = os.getenv("DRAWINGS_FILEPATH", "./drawings.yaml")
 
 
+class DrawException(Exception):
+    pass
+
+
 def get_drawing_participants(draw_name):
     with open(drawings_filepath) as f:
         configs = yaml.safe_load(f)
     return configs.get("draws", {}).get(draw_name)
+
+
+def create_draw(params):
+    with open(drawings_filepath) as f:
+        configs = yaml.safe_load(f)
+
+    draws = configs.get("draws", {})
+    if draws.get(params["name"]) is not None:
+        raise DrawException('Draw already exists')
+
+    draws[params["name"]] = params["participants"]
+    configs['draws'] = draws
+
+    with open(drawings_filepath, "w") as f:
+        yaml.dump(configs, f)
 
 
 def draw(participants, current_name):
@@ -24,6 +43,9 @@ def draw(participants, current_name):
     not_already_played = [
         p["name"] for p in drawable_participants if not p.get("offers_to")
     ]
+
+    if len(not_drawn) == 0:
+        raise DrawException("Not enough participants to draw")
 
     # Special case: if only 2 people can be picked but one of them have not
     # played yet, we need to pick him otherwise he won't have anyone to pick

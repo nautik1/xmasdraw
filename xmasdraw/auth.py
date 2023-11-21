@@ -3,25 +3,19 @@ import secrets
 from .helpers import drawings_filepath
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
-from functools import wraps
+from os.path import exists
 
 
-def check_init_status(need_init_done=True):
-    def _check_init_status(func):
-        @wraps(func)
-        def __check_init_status(*args, **kwargs):
-            with open(drawings_filepath) as f:
-                configs = yaml.safe_load(f)
-            if need_init_done and configs.get("admin_password_hash") is None:
-                return "Need init done"
-            elif not need_init_done and configs.get("admin_password_hash") is not None:
-                return "Too late, init already done"
+def is_admin_password_set():
+    if not exists(drawings_filepath):
+        return False
 
-            return func(*args, **kwargs)
+    with open(drawings_filepath) as f:
+        configs = yaml.safe_load(f)
+    if configs.get("admin_password_hash") is None:
+        return False
 
-        return __check_init_status
-
-    return _check_init_status
+    return True
 
 
 def generate_passphrase():
@@ -34,7 +28,7 @@ def generate_passphrase():
     pass_hash = ph.hash(passphrase)
 
     with open(drawings_filepath) as f:
-        configs = yaml.safe_load(f)
+        configs = yaml.safe_load(f) or {}
 
     configs["admin_password_hash"] = pass_hash
 
