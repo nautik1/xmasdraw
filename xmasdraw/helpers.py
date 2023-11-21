@@ -21,10 +21,23 @@ def create_draw(params):
 
     draws = configs.get("draws", {})
     if draws.get(params["name"]) is not None:
-        raise DrawException('Draw already exists')
+        raise DrawException("Draw already exists")
 
     draws[params["name"]] = params["participants"]
-    configs['draws'] = draws
+    configs["draws"] = draws
+
+    with open(drawings_filepath, "w") as f:
+        yaml.dump(configs, f)
+
+
+def update_draw(draw_name, new_participants):
+    with open(drawings_filepath) as f:
+        configs = yaml.safe_load(f)
+
+    if configs.get("draws", {}).get(draw_name) is None:
+        raise DrawException("Could not find draw")
+
+    configs["draws"][draw_name] = new_participants
 
     with open(drawings_filepath, "w") as f:
         yaml.dump(configs, f)
@@ -62,6 +75,19 @@ def store_participation(draw_name, participant_name, offers_to_name):
     for person in configs["draws"][draw_name]:
         if person.get("name") == participant_name:
             person["offers_to"] = offers_to_name
+
+    with open(drawings_filepath, "w") as f:
+        yaml.dump(configs, f)
+
+
+def delete_draw(draw_name):
+    with open(drawings_filepath) as f:
+        configs = yaml.safe_load(f)
+
+    if configs.get("draws", {}).get(draw_name) is None:
+        raise DrawException("Could not find draw")
+
+    del configs["draws"][draw_name]
 
     with open(drawings_filepath, "w") as f:
         yaml.dump(configs, f)

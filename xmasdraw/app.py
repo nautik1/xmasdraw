@@ -23,6 +23,12 @@ class CreateDrawRequestSchema(Schema):
     )
 
 
+class UpdateDrawRequestSchema(Schema):
+    participants = fields.List(
+        fields.Nested(ParticipantSchema), required=True, validate=validate.Length(2)
+    )
+
+
 ##############
 # Validators #
 ##############
@@ -41,9 +47,23 @@ def check_init_is_done():
     return _check_init_is_done
 
 
-##########
-# Routes #
-##########
+def check_admin_authentication():
+    def _check_admin_authentication(func):
+        @wraps(func)
+        def __check_admin_authentication(*args, **kwargs):
+            password = request.headers.get("X-Auth-Password", None)
+            if not password or not auth.verify_passphrase(password):
+                return "You cannot create a draw.", 403
+            return func(*args, **kwargs)
+
+        return __check_admin_authentication
+
+    return _check_admin_authentication
+
+
+################
+# Admin routes #
+################
 
 
 @app.route("/init", methods=["POST"])
@@ -58,19 +78,10 @@ def init():
     return f'Store this passphrase: "{passphrase}". It will not be retrievable again!'
 
 
-@app.route("/")
-@check_init_is_done()
-def home():
-    return "You need to go to a draw URL."
-
-
 @app.route("/draws", methods=["POST"])
 @check_init_is_done()
+@check_admin_authentication()
 def create_draw():
-    password = request.headers.get("X-Auth-Password", None)
-    if not password or not auth.verify_passphrase(password):
-        return "You cannot create a draw.", 403
-
     requestSchema = CreateDrawRequestSchema()
     try:
         params = requestSchema.load(request.json)
@@ -83,6 +94,60 @@ def create_draw():
         return str(err), 422
 
     return "Created!"
+
+
+@app.route("/draws/<draw_name>", methods=["PUT"])
+@check_init_is_done()
+@check_admin_authentication()
+def update_draw_participants(draw_name):
+    requestSchema = UpdateDrawRequestSchema()
+    try:
+        params = requestSchema.load(request.json)
+    except ValidationError as err:
+        return str(err), 422
+
+    try:
+        helpers.update_draw(draw_name, params["participants"])
+    except helpers.DrawException as err:
+        return str(err), 422
+
+    return "Updated!"
+
+
+@app.route("/draws/<draw_name>", methods=["PURGE", "DELETE"])
+@check_init_is_done()
+@check_admin_authentication()
+def administrate_draw(draw_name):
+    handler = {
+        "PURGE": helpers.reset_draw,
+        "DELETE": helpers.delete_draw,
+    }[request.method]
+
+    try:
+        handler(draw_name)
+    except helpers.DrawException as err:
+        return str(err), 422
+
+    return "Done!"
+
+
+@app.route("/draws/<draw_name>", methods=["PURGE"])
+@check_init_is_done()
+@check_admin_authentication()
+def reset_draw(draw_name):
+    helpers.reset_draw(draw_name)
+    return "Reset done."
+
+
+######################
+# Participant routes #
+######################
+
+
+@app.route("/")
+@check_init_is_done()
+def home():
+    return "You need to go to a draw URL."
 
 
 @app.route("/draws/<draw_name>")
@@ -126,17 +191,6 @@ def participate(draw_name, participant_name):
         participant=participant_name,
         offers_to=offers_to_name,
     )
-
-
-@app.route("/draws/<draw_name>", methods=["DELETE"])
-@check_init_is_done()
-def reset(draw_name):
-    password = request.headers.get("X-Auth-Password", None)
-    if not password or not auth.verify_passphrase(password):
-        return "You cannot reset this draw.", 403
-
-    helpers.reset_draw(draw_name)
-    return "Reset done."
 
 
 if __name__ == "__main__":
