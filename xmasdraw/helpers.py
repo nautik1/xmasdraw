@@ -54,12 +54,3 @@ def reset_draw(draw_name):
 
     with open(drawings_filepath, "w") as f:
         yaml.dump(configs, f)
-
-
-def can_reset(password):
-    with open(drawings_filepath) as f:
-        configs = yaml.safe_load(f)
-
-    adminPass = configs.get("admin_password")
-
-    return adminPass == password

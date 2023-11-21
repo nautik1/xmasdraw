@@ -1,16 +1,25 @@
 from flask import Flask, render_template, request
 
-from . import helpers
+from . import helpers, auth
 
 app = Flask(__name__)
 
 
+@app.route("/init", methods=["POST"])
+@auth.check_init_status(need_init_done=False)
+def init():
+    passphrase = auth.generate_passphrase()
+    return f'Store this passphrase: "{passphrase}". It will not be retrievable!'
+
+
 @app.route("/")
+@auth.check_init_status(need_init_done=True)
 def home():
     return "You need to go to a draw URL."
 
 
 @app.route("/draws/<draw_name>")
+@auth.check_init_status(need_init_done=True)
 def show_draw(draw_name):
     participants = helpers.get_drawing_participants(draw_name)
 
@@ -21,6 +30,7 @@ def show_draw(draw_name):
 
 
 @app.route("/draws/<draw_name>/participants/<participant_name>", methods=["POST"])
+@auth.check_init_status(need_init_done=True)
 def participate(draw_name, participant_name):
     participants = helpers.get_drawing_participants(draw_name)
 
@@ -49,9 +59,10 @@ def participate(draw_name, participant_name):
 
 
 @app.route("/draws/<draw_name>", methods=["DELETE"])
+@auth.check_init_status(need_init_done=True)
 def reset(draw_name):
     password = request.headers.get("X-Auth-Password", None)
-    if not password or not helpers.can_reset(password):
+    if not password or not auth.verify_passphrase(password):
         return "You cannot reset this draw."
 
     helpers.reset_draw(draw_name)

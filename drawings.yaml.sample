@@ -1,7 +1,6 @@
-admin_password: mYpAssW0rDRoXx
 draws:
   myfamily:
-    - name: Bob
-    - name: John
-    - name: Nick
-    - name: Sandra
+  - name: Bob
+  - name: John
+  - name: Nick
+  - name: Sandra
