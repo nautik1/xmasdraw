@@ -1,5 +1,6 @@
 import os
 import random
+
 import yaml
 
 drawings_filepath = os.getenv("DRAWINGS_FILEPATH", "./drawings.yaml")

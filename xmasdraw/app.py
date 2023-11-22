@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request
-from marshmallow import Schema, fields, ValidationError, validate
+from functools import wraps
 from pathlib import Path
 
-from functools import wraps
-from . import helpers, auth
+from flask import Flask, render_template, request
+from marshmallow import Schema, ValidationError, fields, validate
+
+from . import auth, helpers
 
 app = Flask(__name__)
 

@@ -9,7 +9,7 @@ to whom you should offer a present.
 ```
 pyenv version           # Displays version from .python-version
 poetry env use python   # Select pyenv's local python
-poetry install
+poetry install --with dev
 poetry run flask --app "xmasdraw.app:app" run
 ```
 
@@ -31,7 +31,7 @@ to manage draws. Then, you can create/update/reset/delete any draw.
 http POST :5000/init language==fr
 
 # Create your first draw
-http :5000/draws X-Auth-Password:"<your-awesome-passphrase>" name=mydraw "participants[][name]=Hubert" "participants[][name]=Armand" "participants[][name]=Dolores" "participants[][name]=Fraulein"
+http :5000/draws X-Auth-Password:"<passphrase>" name=mydraw "participants[][name]=Hubert" "participants[][name]=Armand" "participants[][name]=Dolores" "participants[][name]=Fraulein"
 
 # Start drawing
 firefox http://localhost:5000/draws/mydraw
@@ -42,5 +42,11 @@ Note: you may be interested in setting a random name for your draw, so it is har
 Other admin actions:
 ```
 # Change the participants list (Note: will reset all participations)
-http PUT :5000/draws/mydraw X-Auth-Password:"atelectasis diamondwise flecklessly perhalogen" "participants[][name]=toto" "participants[][name]=bibi" "participants[][name]=plarf"
+http PUT :5000/draws/mydraw X-Auth-Password:"<passphrase>" "participants[][name]=toto" "participants[][name]=bibi" "participants[][name]=plarf"
+
+# Reset participations (keeping participants)
+http PURGE :5000/draws/mydraw X-Auth-Password:"<passphrase>"
+
+# Delete a draw
+http DELETE :5000/draws/mydraw X-Auth-Password:"<passphrase>"
 ```

@@ -1,9 +1,11 @@
-import yaml
 import secrets
-from .helpers import drawings_filepath
+from os.path import exists
+
+import yaml
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
-from os.path import exists
+
+from .helpers import drawings_filepath
 
 
 def is_admin_password_set():
