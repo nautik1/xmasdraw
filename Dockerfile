@@ -22,7 +22,9 @@ FROM python-base as builder-base
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
     curl \
-    build-essential
+    build-essential \
+    wamerican \
+    wfrench
 
 # install poetry - respects $POETRY_VERSION & $POETRY_HOME
 RUN curl -sSL https://install.python-poetry.org | python
@@ -40,13 +42,17 @@ RUN poetry install --no-dev
 FROM python-base as production
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 
+# Get words for admin pass generation
+COPY --from=builder-base /usr/share/dict/american-english /usr/share/dict/american-english
+COPY --from=builder-base /usr/share/dict/french /usr/share/dict/french
+
 WORKDIR /app/
 
 COPY ./xmasdraw /app/xmasdraw
 
 # `/app/data` should be mounted as a volume
 # to keep drawings.yaml changes persisted
-COPY drawings.yaml.sample /app/data/drawings.yaml
+VOLUME /app/data
 ENV DRAWINGS_FILEPATH=/app/data/drawings.yaml
 
 CMD ["uwsgi", "--http", "0.0.0.0:5000", "--master", "-p", "4", "-w", "xmasdraw.app:app"]

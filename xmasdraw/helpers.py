@@ -97,6 +97,9 @@ def reset_draw(draw_name):
     with open(drawings_filepath) as f:
         configs = yaml.safe_load(f)
 
+    if not configs or configs.get("draws", {}).get(draw_name) is None:
+        raise DrawException("Could not find draw")
+
     for person in configs["draws"][draw_name]:
         person.pop("offers_to", None)
 

@@ -12,15 +12,24 @@ def is_admin_password_set():
 
     with open(drawings_filepath) as f:
         configs = yaml.safe_load(f)
-    if configs.get("admin_password_hash") is None:
+    if configs is None or configs.get("admin_password_hash") is None:
         return False
 
     return True
 
 
-def generate_passphrase():
+def generate_passphrase(language=None):
+    words_list_filepaths = {
+        "fr": "/usr/share/dict/french",
+        "en": "/usr/share/dict/american-english",
+    }
+
+    words_list_path = (
+        words_list_filepaths[language] if language else words_list_filepaths["en"]
+    )
+
     # See https://xkcd.com/936/
-    with open("/usr/share/dict/words") as f:
+    with open(words_list_path) as f:
         words = [word.strip() for word in f]
         passphrase = " ".join(secrets.choice(words) for i in range(4))
 

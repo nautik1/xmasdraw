@@ -53,7 +53,7 @@ def check_admin_authentication():
         def __check_admin_authentication(*args, **kwargs):
             password = request.headers.get("X-Auth-Password", None)
             if not password or not auth.verify_passphrase(password):
-                return "You cannot create a draw.", 403
+                return "Not authorized.", 403
             return func(*args, **kwargs)
 
         return __check_admin_authentication
@@ -71,10 +71,18 @@ def init():
     if auth.is_admin_password_set():
         return "Too late, init already done", 422
 
+    requested_language = request.args.get("language")
+    supported_languages = ["fr", "en"]
+    if (
+        requested_language is not None
+        and requested_language.lower() not in supported_languages
+    ):
+        return f"Unsupported language; only {supported_languages} allowed", 422
+
     # Create the file if it does not exist
     Path(helpers.drawings_filepath).touch(exist_ok=True)
 
-    passphrase = auth.generate_passphrase()
+    passphrase = auth.generate_passphrase(requested_language)
     return f'Store this passphrase: "{passphrase}". It will not be retrievable again!'
 
 
@@ -129,14 +137,6 @@ def administrate_draw(draw_name):
         return str(err), 422
 
     return "Done!"
-
-
-@app.route("/draws/<draw_name>", methods=["PURGE"])
-@check_init_is_done()
-@check_admin_authentication()
-def reset_draw(draw_name):
-    helpers.reset_draw(draw_name)
-    return "Reset done."
 
 
 ######################
