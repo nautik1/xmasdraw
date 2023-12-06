@@ -61,9 +61,13 @@ def draw(participants, current_name):
     if len(not_drawn) == 0:
         raise DrawException("Not enough participants to draw")
 
-    # Special case: if only 2 people can be picked but one of them have not
-    # played yet, we need to pick him otherwise he won't have anyone to pick
-    if len(not_drawn) == 2 and len(not_already_played) == 1:
+    # Special case: if only 2 participants can be picked but one of them has not
+    # played yet, we need to pick them otherwise they won't have anyone to pick
+    if (
+        len(not_drawn) == 2
+        and len(not_already_played) == 1
+        and not_already_played[0] in not_drawn
+    ):
         return not_already_played[0]
 
     return random.choice(list(not_drawn))
