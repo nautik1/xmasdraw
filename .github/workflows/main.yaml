@@ -33,3 +33,17 @@ jobs:
 
     - name: Run tests
       run: poetry run pytest
+
+  build:
+    name: Build image
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: nautik/xmasdraw
+          containerfiles: |
+            ./Dockerfile
