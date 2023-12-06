@@ -20,7 +20,9 @@ jobs:
           python-version-file: '.python-version'
           cache: 'poetry'
       - run: poetry install --with dev
-      - run: poetry run flake8
+      - run: poetry run flake8 xmasdraw/
+      - run: poetry run black --check xmasdraw/
+      - run: poetry run isort --check xmasdraw/
 
   test:
     runs-on: ubuntu-latest
