@@ -11,6 +11,7 @@ pyenv version           # Displays version from .python-version
 poetry env use python   # Select pyenv's local python
 poetry install --with dev
 poetry run pytest
+poetry run flake8
 poetry run flask --app "xmasdraw.app:app" run
 ```
 
