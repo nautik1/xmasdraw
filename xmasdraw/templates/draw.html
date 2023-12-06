@@ -26,7 +26,7 @@
                                         {% if participant.offers_to %}
                                         <span class="badge rounded-pill bg-success">Déjà tiré !</span>
                                         {% else %}
-                                        <form action="draw/{{participant.name}}" method="post">
+                                        <form action="{{draw_name}}/participants/{{participant.name}}" method="post">
                                             <button class="btn btn-primary" name="itsme" value="{{participant.name}}">
                                                 C'est moi
                                             </button>
@@ -40,7 +40,7 @@
                     </div>
                     <div class="card-footer text-muted small">
                         Fait avec <i class="bi bi-heart"></i> mais plutôt à l'arrache.
-                        <a target="_blank" href="https://github.com/nautik1/xmasdraw/blob/main/helpers.py#L13-L22">Voyez
+                        <a target="_blank" href="https://github.com/nautik1/xmasdraw">Voyez
                             vous-même</a>
                     </div>
                 </div>
